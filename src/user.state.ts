@@ -1,6 +1,9 @@
 import { app } from "./app";
 import * as angular from "angular";
 
+/**
+ * This class contains all state management for User component
+ */
 export class UserState {
     inProgress: boolean;
     user: string;
@@ -25,18 +28,18 @@ export class UserState {
             }
 
             this.inProgress = false;
-        }, 5000);
+        }, 1000);
     }
 }
 
-export class UserStateService {
-    public static $inject = ["$timeout"];
-
-    constructor(private $timeout: angular.ITimeoutService) {}
-
-    createInstance(userId: string) {
-        return new UserState(this.$timeout, userId);
-    }
+/**
+ * Each component will be associated with a state factory function.
+ * This is unfortunately a boilerplate code you need to have for each component
+ */
+export interface IUserStateFactory {
+    (userId: string): UserState;
 }
 
-app.service("userState", UserStateService);
+app.service("userStateFactory", ["$timeout", ($timeout: angular.ITimeoutService): IUserStateFactory => {
+    return (userId: string) => new UserState($timeout, userId);
+}]);

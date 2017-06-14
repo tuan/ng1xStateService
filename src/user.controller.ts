@@ -1,21 +1,21 @@
-import { UserState, UserStateService } from "./user.state";
+import { IUserStateFactory, UserState } from "./user.state";
 
 export class UserController {
-    public static $inject = ["userState"];
+    public static $inject = ["userStateFactory"];
 
     // inputs
     public userId: string;
 
-    // state 
+    // state of this component
     private state: UserState;
-    constructor(private homeState: UserStateService) {}
+
+    constructor(private userStateFactory: IUserStateFactory) {}
 
     $onInit() {
-        this.state = this.homeState.createInstance(this.userId);
-        this.state.loadUser();
-    }
+        // state could be initialized based on custom inputs
+        this.state = this.userStateFactory(this.userId);
 
-    $onChanges() {
-        console.log("changes!");
+        // execute an async action
+        this.state.loadUser();
     }
 }
